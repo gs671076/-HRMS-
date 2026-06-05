@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: hrms-attendance
+
+  datasource:
+    url: jdbc:postgresql://db.ntmniygknzfpvipatsyq.supabase.co:6543/postgres?pgbouncer=true
+    username: postgres
+    password: Radha@82400
+    hikari:
+      max-lifetime: 270000
+      keepalive-time: 120000
+      connection-timeout: 30000
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      connect-timeout: 2000
+      timeout: 2000
+    web:
+      pageable:
+        default-page-size: 20
+        max-page-size: 100
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:3000

@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    # LF-205: Staging uses Supabase PgBouncer pooler — port 6543 is mandatory
+    # Direct port 5432 causes connection exhaustion because Supabase caps
+    # direct connections per project on the free/pro tier
+    url: jdbc:postgresql://${SUPABASE_HOST}:6543/postgres?pgbouncer=true
+    username: postgres
+    password: ${SUPABASE_PASSWORD}
+    hikari:
+      # LF-205: Supabase kills idle connections after 5 min.
+      # max-lifetime=270s ensures HikariCP retires connections before they go stale.
+      max-lifetime: 270000
+      # LF-205: Keepalive sends a "SELECT 1" every 2 min to keep connections warm.
+      keepalive-time: 120000
+      connection-timeout: 30000
+      # LF-205: For 20 concurrent users on staging, pool-size 10 is sufficient.
+      # With the external API call moved OUTSIDE @Transactional, each request
+      # holds a DB connection only for the actual DB work — not for HTTP wait time.
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  jpa:
+    show-sql: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      connect-timeout: 2000
+      timeout: 2000
+
+app:
+  cors:
+    allowed-origins:
+      - https://your-staging-frontend.com
+      - http://localhost:3000
